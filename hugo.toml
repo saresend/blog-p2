@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://saresend.github.io/blog-p2/'
 languageCode = 'en-us'
 title = 'Milo'
 theme = 'mini'
