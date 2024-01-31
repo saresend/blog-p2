@@ -1,4 +1,7 @@
 baseURL = 'https://saresend.github.io/blog-p2/'
 languageCode = 'en-us'
-title = 'Milo'
+title = 'Sam Resendez'
 theme = 'mini'
+
+[params]
+description = "Mostly my place to store ideas about various topics in math and computer science"
