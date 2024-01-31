@@ -12,6 +12,7 @@ At this scale, the problem becomes pretty interesting - there's no longer a clea
 
 ## How it's currently done 
 
+$\frac{1}{2}$
 
 
 
