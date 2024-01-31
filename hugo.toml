@@ -5,5 +5,13 @@ theme = 'mini'
 relativeUrls = true
 
 [params]
+author = "Sam Resendez"
 bio = "My Blog for topics in math and computer science"
 description = "Mostly my place to store ideas about various topics in math and computer science"
+showPowerBy = false
+math = true
+customJS = ["js/custom.js"]
+
+
+
+
