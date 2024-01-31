@@ -1,7 +1,9 @@
-baseURL = 'https://saresend.github.io/blog-p2/'
+baseURL = 'https://saresend.github.io/'
 languageCode = 'en-us'
 title = 'Sam Resendez'
 theme = 'mini'
+relativeUrls = true
 
 [params]
+bio = "My Blog for topics in math and computer science"
 description = "Mostly my place to store ideas about various topics in math and computer science"
