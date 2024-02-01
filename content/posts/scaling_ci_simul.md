@@ -5,7 +5,7 @@ draft = true
 +++
 # Intro
 
-Prior to going to grad school, I worked on Meta's continuous test infrastructure. Coming from a background in product development doing mobile iOS, the move to infrastructure was refreshing. The core issues were not nearly as nebulous, and were far more central to everything we did - the success of the team needed only a few metrics to explain. The problem we were aiming to solve was the following: given thousands of code changes going in all at once, and millions of tests that were part of a test suite, how do you efficiently verify that all these changes are safe. For smaller codebases, the answer is fairly straightforward - just run every test on every change. However, this quickly becomes far too expensive - we were forced to sample smaller and smaller subsets of our test suite, and were tasked with doing so in a way that minimzes the number of breaking changes we allow through our CI pipeline. 
+Prior to going to grad school, I worked on a team that managed continuous test infrastructure. Coming from a background in product development doing mobile iOS, the move to infrastructure was refreshing. The core issues were not nearly as nebulous, and were far more central to everything we did - the success of the team needed only a few metrics to explain. The problem we were aiming to solve was the following: given thousands of code changes going in all at once, and millions of tests that were part of a test suite, how do you efficiently verify that all these changes are safe. For smaller codebases, the answer is fairly straightforward - just run every test on every change. However, this quickly becomes far too expensive - we were forced to sample smaller and smaller subsets of our test suite, and were tasked with doing so in a way that minimzes the number of breaking changes we allow through our CI pipeline. 
 
 At this scale, the problem becomes pretty interesting - there's no longer a clear optimum, and it becomes a matter of juggling tradeoffs. The organic growth of the project meant that we were left with a lot of expensive and hard to remove design choices, and as is the nature of large projects, changes were small and incremental. One sentiment that endlessly came up during discussions was the feeling that we were hamstrung by the size and scale of the existing system - there was no "rewriting it from scratch". Since leaving the question has stuck with me - if we had imagined this future from the beginning, how might we design a better CI system from the ground up? 
 
@@ -27,12 +27,15 @@ Another aspect we must capture in any adequate model is the structure of our cod
 
 One possible model is a graph $G = (V, E)$, where each vertex is a random variable. In particular, each vertex can be described as an indicator random variable, where it is 1 only if the change under test in fact breaks the test, and 0 otherwise. The edges indicate the following relation - if one test fails, a related test may also be more likely to fail, and similarly for success. Note that this relation is not transitive - 2 completely independent tests may both share some coverage with some larger test, without themselves testing the same functionality. 
 
-To simplify further, let each vertex $v_i$ be a bernoulli random variable of some probability $p$. 
+We must also augment each vertex with the cost it takes to observe its result. In our model, let each vertex $v_i \in V$ be defined to be a 2-tuple $(P_i, x_i)$, where $P_i$ is the price to observe this random variable, and $x_i$ is its result. For simplicity each vertex $v_i$ is modeled a bernoulli random variable of some probability $p$. 
 
-Let's model each edge with some value $w_i \in [0, 1]$, that indicates the "strength" of the relation. A rather crude method for computing this is the following -  for a given edge $(u, v)$ with weight $w_i$, if we get a realization of $u$, we either shift the probability of $v_i$ down or up by $w_i$, depending on whether $u$ is a success or failure. Mathematically, we have: $P(v_i = 1 | u_i = 0) = \max(0, p - w_{uv})$ and $P(v_i = 1 | u_i = 1) = \min(1, p + w_{uv})$.
+Let's model each edge with some value $w_i \in [0, 1]$, that indicates the "strength" of the relation. The idea is rather simple - if an overlapping tests succeeds, then there's a better chance its neighboring tests succeed because they test overlapping functionality. A rather crude method for computing this is the following -  for a given edge $(u, v)$ with weight $w_i$, if we get a realization of $u$, we either shift the probability of $v_i$ down or up by $w_i$, depending on whether $u$ is a success or failure. Mathematically, we have: $P(v_i = 1 | u_i = 0) = \max(0, p - w_{uv})$ and $P(v_i = 1 | u_i = 1) = \min(1, p + w_{uv})$.
 
+## A sanity check 
 
+With this model in place, let's look at how our "run the world" method performs. However, its hard to evaluate unless we have some other strategies to compare it against. Indeed, let's consider the class of strategies defined by some parameter p, with which we evaluate each test indepependently with probability p. Our run the world strategy is exactly the strategy when we take $p = 1$. 
 
+## Finding the pareto frontier
 
 # Departing from determinism
 
